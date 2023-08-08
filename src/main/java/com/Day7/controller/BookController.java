@@ -6,17 +6,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.Day7.entity.Book;
+import com.Day7.entity.MyBookList;
 import com.Day7.service.BookService;
+import com.Day7.service.MyBookListService;
 
 @Controller
 public class BookController {
 
 	@Autowired
 	BookService bookService;
+	
+	@Autowired
+	private MyBookListService myBookListService;
 	
 	@GetMapping("/")
 	public String home()
@@ -46,9 +53,21 @@ public class BookController {
 		return "redirect:/available_books";
 	}
 	
+	@GetMapping("/my_books")
+	public String getMyBooks()
+	{
+		return "myBooks";
+	}
 	
 	
-	
+	@RequestMapping("/myList/{id}")
+	public String getMyList(@PathVariable int id)
+	{
+		Book b=bookService.getBookById(id);
+		MyBookList mb = new MyBookList(b.getId(),b.getName(), b.getAuthor(), b.getPrice());
+		myBookListService.saveMyBooks(mb);
+		return "redirect:/my_books";
+	}
 	
 	
 	
